@@ -14,15 +14,16 @@ set -euo pipefail
 #      └─ blackbox-exporter :9115
 # ============================================================
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POD_NAME="monitoring-pod"
 
 PROMETHEUS_IMAGE="quay.io/prometheus/prometheus:v3.13.1"
 BLACKBOX_IMAGE="quay.io/prometheus/blackbox-exporter:v0.28.0"
 ALERTMANAGER_IMAGE="quay.io/prometheus/alertmanager:v0.28.1"
 
-PROMETHEUS_DIR="./prometheus"
-BLACKBOX_DIR="./blackbox"
-ALERTMANAGER_DIR="./alertmanager"
+PROMETHEUS_DIR="${SCRIPT_DIR}/prometheus"
+BLACKBOX_DIR="${SCRIPT_DIR}/blackbox"
+ALERTMANAGER_DIR="${SCRIPT_DIR}/alertmanager"
 ALERTMANAGER_TEMPLATE_DIR="${ALERTMANAGER_DIR}/templates"
 
 PROMETHEUS_CONFIG="${PROMETHEUS_DIR}/prometheus.yml"
@@ -53,68 +54,6 @@ echo "[1/7] Creating directories..."
 mkdir -p "${PROMETHEUS_DIR}"
 mkdir -p "${BLACKBOX_DIR}"
 mkdir -p "${ALERTMANAGER_TEMPLATE_DIR}"
-
-# ------------------------------------------------------------
-# 3. Prometheus設定ファイル作成
-# ------------------------------------------------------------
-
-echo "[2/7] Creating Prometheus configuration..."
-
-# cat << 'EOF' > "${PROMETHEUS_CONFIG}"
-# global:
-#   scrape_interval: 15s
-
-# scrape_configs:
-
-#   # Blackbox Exporter自身のメトリクス
-#   - job_name: "blackbox-exporter"
-#     static_configs:
-#       - targets:
-#           - "127.0.0.1:9115"
-
-#   # Blackbox Exporter経由のHTTP監視
-#   - job_name: "blackbox-http"
-#     metrics_path: /probe
-
-#     params:
-#       module:
-#         - http_2xx
-
-#     static_configs:
-#       - targets:
-#           - https://prometheus.io
-
-#     relabel_configs:
-#       # 監視対象URLをprobeのtargetパラメータへ渡す
-#       - source_labels: [__address__]
-#         target_label: __param_target
-
-#       # instanceラベルには監視対象URLを設定
-#       - source_labels: [__param_target]
-#         target_label: instance
-
-#       # 実際にscrapeする先をBlackbox Exporterに変更
-#       - target_label: __address__
-#         replacement: 127.0.0.1:9115
-# EOF
-
-# ------------------------------------------------------------
-# 4. Blackbox Exporter設定ファイル作成
-# ------------------------------------------------------------
-
-echo "[3/7] Creating Blackbox Exporter configuration..."
-
-# cat << 'EOF' > "${BLACKBOX_CONFIG}"
-# modules:
-
-#   http_2xx:
-#     prober: http
-#     timeout: 5s
-
-#     http:
-#       method: GET
-#       preferred_ip_protocol: ip4
-# EOF
 
 # ------------------------------------------------------------
 # 5. 既存Podの扱い

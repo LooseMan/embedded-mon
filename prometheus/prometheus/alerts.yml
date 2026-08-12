@@ -1,20 +1,32 @@
 groups:
-  - name: ssh-monitoring
+  - name: infrastructure-health
     rules:
       - alert: SSHPortClosed
         expr: probe_success{job="blackbox-ssh"} == 0
         for: 1m
         labels:
           severity: critical
+          layer: dead
         annotations:
           summary: "SSH service is not responding"
           description: "The SSH port on {{ $labels.instance }} is closed or not answering."
 
-      - alert: SSHProbeFailed
+      - alert: SSHProbeRepeatedlyFailing
         expr: probe_success{job="blackbox-ssh"} == 0
         for: 5m
         labels:
           severity: warning
+          layer: service
         annotations:
           summary: "SSH probe has failed repeatedly"
           description: "Blackbox probe for {{ $labels.instance }} has failed for 5 minutes."
+
+      - alert: SSHProbeRecovered
+        expr: probe_success{job="blackbox-ssh"} == 1
+        for: 5m
+        labels:
+          severity: info
+          layer: service
+        annotations:
+          summary: "SSH probe recovered"
+          description: "SSH probe for {{ $labels.instance }} has recovered."
