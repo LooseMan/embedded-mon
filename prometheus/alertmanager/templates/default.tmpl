@@ -1,0 +1,8 @@
+{{ define "default.title" }}{{ .CommonLabels.alertname }}{{ end }}
+
+{{ define "default.text" }}
+{{ if .CommonAnnotations.summary }}Summary: {{ .CommonAnnotations.summary }}{{ end }}
+{{ if .CommonAnnotations.description }}Description: {{ .CommonAnnotations.description }}{{ end }}
+{{ if .CommonLabels.instance }}Instance: {{ .CommonLabels.instance }}{{ end }}
+{{ if .CommonLabels.severity }}Severity: {{ .CommonLabels.severity }}{{ end }}
+{{ end }}

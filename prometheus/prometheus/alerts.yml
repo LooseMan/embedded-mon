@@ -1,0 +1,20 @@
+groups:
+  - name: ssh-monitoring
+    rules:
+      - alert: SSHPortClosed
+        expr: probe_success{job="blackbox-ssh"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SSH service is not responding"
+          description: "The SSH port on {{ $labels.instance }} is closed or not answering."
+
+      - alert: SSHProbeFailed
+        expr: probe_success{job="blackbox-ssh"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "SSH probe has failed repeatedly"
+          description: "Blackbox probe for {{ $labels.instance }} has failed for 5 minutes."
