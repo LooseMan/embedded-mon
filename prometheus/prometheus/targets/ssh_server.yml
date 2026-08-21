@@ -1,0 +1,9 @@
+- targets:
+    - '192.168.17.131:22'
+  labels:
+    role: 'pxe-server'
+
+- targets:
+    - '192.168.17.134:22'
+  labels:
+    role: 'node-exporter'

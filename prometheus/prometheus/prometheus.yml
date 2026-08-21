@@ -18,6 +18,11 @@ scrape_configs:
       - targets:
           - "127.0.0.1:9115"
 
+  - job_name: "node-exporter"
+    static_configs:
+      - targets:
+          - "192.168.17.134:9100"
+
   # Blackbox Exporter経由のHTTP監視
   # - job_name: "blackbox-http"
   - job_name: "blackbox-ssh"
@@ -28,10 +33,11 @@ scrape_configs:
         # - http_2xx
         - ssh_banner
 
-    static_configs:
-      - targets:
-          # - https://prometheus.io
-          - 192.168.122.234:22
+    # ホストの属性をラベルとして付与するために、targetsを外部ファイルに分離（5分ごとにリロード）
+    file_sd_configs:
+      - files:
+          - '/etc/prometheus/targets/ssh_server.yml'  # ホスト一覧ファイルを指定
+        refresh_interval: 5m
 
     relabel_configs:
       # 監視対象URLをprobeのtargetパラメータへ渡す

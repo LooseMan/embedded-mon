@@ -28,6 +28,7 @@ ALERTMANAGER_TEMPLATE_DIR="${ALERTMANAGER_DIR}/templates"
 
 PROMETHEUS_CONFIG="${PROMETHEUS_DIR}/prometheus.yml"
 PROMETHEUS_ALERTS="${PROMETHEUS_DIR}/alerts.yml"
+PROMETHEUS_TARGETS="${PROMETHEUS_DIR}/targets"
 BLACKBOX_CONFIG="${BLACKBOX_DIR}/blackbox.yml"
 ALERTMANAGER_CONFIG="${ALERTMANAGER_DIR}/alertmanager.yml"
 ALERTMANAGER_TEMPLATE="${ALERTMANAGER_TEMPLATE_DIR}/default.tmpl"
@@ -120,6 +121,7 @@ podman run -d \
     --pod "${POD_NAME}" \
     -v "$(realpath "${PROMETHEUS_CONFIG}"):/etc/prometheus/prometheus.yml:Z,ro" \
     -v "$(realpath "${PROMETHEUS_ALERTS}"):/etc/prometheus/alerts.yml:Z,ro" \
+    -v "$(realpath "${PROMETHEUS_TARGETS}"):/etc/prometheus/targets:Z,ro" \
     "${PROMETHEUS_IMAGE}" \
     --config.file=/etc/prometheus/prometheus.yml
 
